@@ -29,6 +29,12 @@ async function start() {
   options.enableHands();
   options.enableAI();
 
+  // Pass API key from localStorage to XR Blocks
+  const savedKey = localStorage.getItem('gemini_api_key');
+  if (savedKey) {
+    options.ai.gemini.apiKey = savedKey;
+  }
+
   // Request mic permission before entering XR — some browsers require this gesture
   const permitted = await requestAudioPermission();
   if (!permitted) return;
@@ -43,5 +49,11 @@ async function start() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  start();
+  const saved = localStorage.getItem('gemini_api_key');
+  if (saved) {
+    start();
+  } else {
+    // El overlay de index.html llamará a window.__startXR() al guardar la clave
+    window.__startXR = start;
+  }
 });
