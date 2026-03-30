@@ -9,7 +9,7 @@ When you want to create or remove objects in the XR scene, include JSON commands
 {"action": "spawn", "object": "deer", "position": "front"}
 {"action": "remove", "object": "deer"}
 
-Available objects to spawn: deer, fireflies, bird, mushroom, fog_patch
+Available objects to spawn: deer, fireflies, bird, mushroom, fog_patch, tree
 Available positions: front, left, right, around
 
 Rules:
@@ -66,6 +66,8 @@ export class ForestGeminiManager extends CoreGeminiManager {
       await super.startGeminiLive({
         liveParams: {
           systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          outputAudioTranscription: {},
+          inputAudioTranscription: {},
         },
       });
       this._updateButton();
@@ -191,6 +193,7 @@ export class ForestGeminiManager extends CoreGeminiManager {
       case 'bird':      obj = this._makeBird();       break;
       case 'mushroom':  obj = this._makeMushroom();   break;
       case 'fog_patch': obj = this._makeFogPatch();   break;
+      case 'tree':      obj = this._makeTree();       break;
       default:
         console.warn('Unknown object:', name);
         return;
@@ -342,6 +345,29 @@ export class ForestGeminiManager extends CoreGeminiManager {
       );
       group.add(fog);
     }
+    return group;
+  }
+
+  _makeTree() {
+    const group = new THREE.Group();
+    const scale = 0.8 + Math.random() * 0.5;
+
+    // Tronco
+    const trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08 * scale, 0.12 * scale, 1.2 * scale, 8),
+      new THREE.MeshPhongMaterial({ color: 0x5c3a1e })
+    );
+    trunk.position.y = 0.6 * scale;
+    group.add(trunk);
+
+    // Copa
+    const canopy = new THREE.Mesh(
+      new THREE.SphereGeometry(0.5 * scale, 8, 6),
+      new THREE.MeshPhongMaterial({ color: 0x2d5a1b })
+    );
+    canopy.position.y = 1.4 * scale;
+    group.add(canopy);
+
     return group;
   }
 }
